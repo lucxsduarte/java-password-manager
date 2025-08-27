@@ -1,9 +1,10 @@
 package com.lucasduarte.password_manager.entities;
 
-import com.lucasduarte.password_manager.enums.Category;
-import com.lucasduarte.password_manager.enums.LoginType;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -14,20 +15,16 @@ public class PasswordEntry {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime creationDate;
+
+    @Lob
     @Column(nullable = false)
-    private Category category;
+    private byte[] encryptedData;
 
+    @Lob
     @Column(nullable = false)
-    private String alias;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private LoginType loginType;
-
-    @Column(name = "login_value")
-    private String loginValue;
-
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String encryptedPassword;
+    private byte[] initializationVector;
 
 }
