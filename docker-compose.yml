@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  postgres-db:
+    image: postgres:14
+    container_name: password-manager-db
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Serviço da nossa Aplicação Java
+  app:
+    build: .
+    container_name: password-manager-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres-db
+    environment:
+      # Conexão com o Banco de Dados
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/${DB_NAME}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+
+volumes:
+  postgres_data:
